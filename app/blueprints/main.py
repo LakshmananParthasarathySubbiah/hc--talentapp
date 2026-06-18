@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from flask import Blueprint, render_template, redirect, url_for, request, abort, jsonify
 from flask_login import login_required, current_user
 from functools import wraps
@@ -15,14 +14,6 @@ def admin_required(f):
             abort(403)
         return f(*args, **kwargs)
     return decorated_function
-
-=======
-from flask import Blueprint, render_template, redirect, url_for
-from flask_login import login_required, current_user
-
-main_bp = Blueprint("main", __name__)
-
->>>>>>> ac1cc803711524f5e23023c04f966b9e0692bb22
 @main_bp.route("/")
 def index():
     return redirect(url_for("auth.login"))
@@ -34,7 +25,6 @@ def dashboard():
 
 @main_bp.route("/browse")
 def browse():
-<<<<<<< HEAD
     q = request.args.get("q", "").strip()
     page = request.args.get("page", 1, type=int)
 
@@ -109,6 +99,3 @@ def api_talent_detail(id):
         "links": t.links,
         "photo_filename": t.photo_filename
     })
-=======
-    return render_template("main/browse.html", talents=[])
->>>>>>> ac1cc803711524f5e23023c04f966b9e0692bb22

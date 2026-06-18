@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-<<<<<<< HEAD
 {% block title %}Dashboard - TalentHub{% endblock %}
 {% block content %}
 <div>
@@ -62,18 +61,5 @@
       <a href="{{ url_for('profile.create_profile') }}" class="btn">Create Profile</a>
     </div>
   {% endif %}
-=======
-{% block title %}Dashboard{% endblock %}
-{% block content %}
-<div class="row">
-  <div class="col-md-8 mx-auto">
-    <h4 class="fw-semibold mb-1">Welcome, {{ current_user.username }}</h4>
-    <p class="text-muted small">Your dashboard. Profile features coming soon.</p>
-    <hr>
-    <a href="{{ url_for('auth.change_password') }}" class="btn btn-sm btn-outline-secondary">
-      Change Password
-    </a>
-  </div>
->>>>>>> ac1cc803711524f5e23023c04f966b9e0692bb22
 </div>
 {% endblock %}

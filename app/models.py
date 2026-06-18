@@ -42,16 +42,12 @@ class User(UserMixin, db.Model):
     role          = db.Column(db.String(10),  default="user", nullable=False)
     created_at    = db.Column(db.DateTime,    server_default=db.func.now())
 
-<<<<<<< HEAD
     profile       = db.relationship('TalentProfile', backref='user', uselist=False, cascade='all, delete-orphan')
 
-=======
->>>>>>> ac1cc803711524f5e23023c04f966b9e0692bb22
     def __repr__(self):
         return f"<User {self.username}>"
 
 
-<<<<<<< HEAD
 class TalentProfile(db.Model):
     __tablename__ = "talent_profiles"
 
@@ -66,8 +62,6 @@ class TalentProfile(db.Model):
         return f"<TalentProfile of user {self.user_id}>"
 
 
-=======
->>>>>>> ac1cc803711524f5e23023c04f966b9e0692bb22
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
