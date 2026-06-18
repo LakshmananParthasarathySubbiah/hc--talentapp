@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ profile_user.username }}'s Profile - TalentHub{% endblock %}
+{% block content %}
+<div style="margin-bottom: 20px;">
+  <a href="{{ url_for('main.browse') }}" class="btn">Back to Browse</a>
+</div>
+
+<div class="card">
+  <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+    <div>
+      {% if profile.photo_filename %}
+        <img src="{{ url_for('static', filename='uploads/' + profile.photo_filename) }}" 
+             alt="Profile Photo" 
+             style="width: 120px; height: 120px; object-fit: cover; border: 1px solid #ccc;">
+      {% else %}
+        <div style="width: 120px; height: 120px; background-color: #333; color: #fff; font-size: 3rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+          {{ profile_user.username[0] | upper }}
+        </div>
+      {% endif %}
+    </div>
+    <div style="flex: 1; min-width: 250px;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <h2 style="margin: 0;">{{ profile_user.username }}</h2>
+          <p style="color: #666; margin: 5px 0 15px 0;">Email: {{ profile_user.email }}</p>
+        </div>
+        <div>
+          {% if current_user.is_authenticated and current_user.id == profile.user_id %}
+            <a href="{{ url_for('profile.edit_profile') }}" class="btn">Edit Profile</a>
+          {% endif %}
+          <a href="{{ url_for('profile.export_pdf', user_id=profile_user.id) }}" class="btn">Download PDF</a>
+        </div>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+
+      <div style="margin-bottom: 15px;">
+        <h5 style="margin: 0 0 5px 0;">About</h5>
+        <p style="margin: 0; white-space: pre-line; line-height: 1.4;">{{ profile.bio }}</p>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <h5 style="margin: 0 0 5px 0;">Skills</h5>
+        <div>
+          {% if profile.skills %}
+            {% for skill in profile.skills.split(',') %}
+              {% if skill.strip() %}
+                <span style="background-color: #f2f2f2; border: 1px solid #ccc; padding: 3px 8px; font-size: 0.85rem; margin-right: 5px; display: inline-block; margin-bottom: 5px;">{{ skill.strip() }}</span>
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            <span style="color: #666; font-size: 0.9rem;">No skills specified.</span>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if profile.links and (profile.links.get('github') or profile.links.get('linkedin') or profile.links.get('website')) %}
+        <div style="margin-top: 20px;">
+          <h5 style="margin: 0 0 10px 0;">Links</h5>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            {% if profile.links.get('github') %}
+              <a href="{{ profile.links.get('github') }}" target="_blank" rel="noopener noreferrer" class="btn">GitHub</a>
+            {% endif %}
+            {% if profile.links.get('linkedin') %}
+              <a href="{{ profile.links.get('linkedin') }}" target="_blank" rel="noopener noreferrer" class="btn">LinkedIn</a>
+            {% endif %}
+            {% if profile.links.get('website') %}
+              <a href="{{ profile.links.get('website') }}" target="_blank" rel="noopener noreferrer" class="btn">Website</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

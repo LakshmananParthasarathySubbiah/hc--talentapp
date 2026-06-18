@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}
+  {% if profile and profile.id %}Edit Profile{% else %}Create Profile{% endif %} - TalentHub
+{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+  <h3>{% if profile and profile.id %}Edit Profile{% else %}Create Profile{% endif %}</h3>
+  <p style="font-size: 0.9rem; color: #666; margin: 0 0 20px 0;">Set up your profile to showcase your skills and links to potential opportunities.</p>
+
+  <form action="{% if profile and profile.id %}{{ url_for('profile.edit_profile') }}{% else %}{{ url_for('profile.create_profile') }}{% endif %}" 
+        method="POST" 
+        enctype="multipart/form-data"
+        class="needs-validation" 
+        novalidate>
+    <div>
+      <label for="bio">Biography</label>
+      <textarea name="bio" id="bio" rows="4" maxlength="500" required
+                class="{% if errors.get('bio') %}is-invalid{% endif %}"
+                placeholder="Tell us about yourself, your background, and what you do...">{{ profile.bio if profile else '' }}</textarea>
+      {% if errors.get('bio') %}
+        <div class="invalid-feedback" style="display: block;">{{ errors['bio'] }}</div>
+      {% else %}
+        <div class="invalid-feedback">Biography is required.</div>
+        <div style="font-size: 0.8rem; color: #666; margin-top: 3px;">A short bio describing your expertise. Max 500 characters.</div>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="skills">Skills</label>
+      <input type="text" name="skills" id="skills"
+             class="{% if errors.get('skills') %}is-invalid{% endif %}"
+             value="{{ profile.skills if profile else '' }}" required 
+             placeholder="e.g. Python, SQL, Flask, UI Design">
+      {% if errors.get('skills') %}
+        <div class="invalid-feedback" style="display: block;">{{ errors['skills'] }}</div>
+      {% else %}
+        <div class="invalid-feedback">Please list at least one skill.</div>
+        <div style="font-size: 0.8rem; color: #666; margin-top: 3px;">Enter skills separated by commas.</div>
+      {% endif %}
+    </div>
+
+    <div>
+      <label for="photo">Profile Photo</label>
+      {% if profile and profile.photo_filename %}
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px; border: 1px solid #ccc; padding: 10px;">
+          <img src="{{ url_for('static', filename='uploads/' + profile.photo_filename) }}" 
+               alt="Current Photo" 
+               style="width: 60px; height: 60px; object-fit: cover;">
+          <div>
+            <span style="font-weight: bold; font-size: 0.9rem; display: block;">Current Photo</span>
+            <span style="font-size: 0.8rem; color: #666;">{{ profile.photo_filename }}</span>
+          </div>
+        </div>
+      {% endif %}
+      <input type="file" name="photo" id="photo" accept="image/*"
+             class="{% if errors.get('photo') %}is-invalid{% endif %}">
+      {% if errors.get('photo') %}
+        <div class="invalid-feedback" style="display: block;">{{ errors['photo'] }}</div>
+      {% else %}
+        <div class="invalid-feedback">Invalid file type.</div>
+        <div style="font-size: 0.8rem; color: #666; margin-top: 3px;">Upload a photo (PNG, JPG, JPEG, WEBP).</div>
+      {% endif %}
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;">
+    <h4>Online Links</h4>
+    <p style="font-size: 0.9rem; color: #666;">Connect your GitHub, LinkedIn, or website.</p>
+
+    <div>
+      <label for="github">GitHub Profile URL</label>
+      <input type="url" name="github" id="github" value="{{ profile.links.get('github', '') if profile and profile.links else '' }}" placeholder="https://github.com/username">
+    </div>
+
+    <div>
+      <label for="linkedin">LinkedIn Profile URL</label>
+      <input type="url" name="linkedin" id="linkedin" value="{{ profile.links.get('linkedin', '') if profile and profile.links else '' }}" placeholder="https://linkedin.com/in/username">
+    </div>
+
+    <div>
+      <label for="website">Personal Website or Portfolio</label>
+      <input type="url" name="website" id="website" value="{{ profile.links.get('website', '') if profile and profile.links else '' }}" placeholder="https://yourwebsite.com">
+    </div>
+
+    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+      <a href="{{ url_for('main.dashboard') }}" class="btn">Cancel</a>
+      <button type="submit">{% if profile and profile.id %}Save Changes{% else %}Create Profile{% endif %}</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

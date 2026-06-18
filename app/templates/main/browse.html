@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+<<<<<<< HEAD
+{% block title %}Browse Talents - TalentHub{% endblock %}
+{% block content %}
+<div>
+  <div style="text-align: center; margin-bottom: 30px;">
+    <h2>Discover Talents</h2>
+    <p style="font-size: 0.9rem; color: #666; margin: 0 0 20px 0;">Find outstanding professionals by their name, biography, or skills.</p>
+    
+    <form action="{{ url_for('main.browse') }}" method="GET" style="display: inline-flex; width: 100%; max-width: 600px;">
+      <input type="text" name="q" value="{{ q }}" placeholder="Search by name, skill, bio..." style="padding: 10px; font-size: 1rem; flex: 1;">
+      {% if q %}
+        <a href="{{ url_for('main.browse') }}" class="btn" style="display: flex; align-items: center; justify-content: center; padding: 10px; border-left: none; border-right: none;">Clear</a>
+      {% endif %}
+      <button type="submit" style="padding: 10px 20px; font-size: 1rem;">Search</button>
+    </form>
+  </div>
+
+  {% if pagination.items %}
+    <div class="grid">
+      {% for talent in pagination.items %}
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+              {% if talent.photo_filename %}
+                <img src="{{ url_for('static', filename='uploads/' + talent.photo_filename) }}" 
+                     alt="Profile Photo" 
+                     style="width: 50px; height: 50px; border: 1px solid #ccc; object-fit: cover;">
+              {% else %}
+                <div style="width: 50px; height: 50px; background-color: #333; color: #fff; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                  {{ talent.user.username[0] | upper }}
+                </div>
+              {% endif %}
+              <div>
+                <h5 style="margin: 0; font-size: 1rem;">{{ talent.user.username }}</h5>
+                <span style="font-size: 0.8rem; color: #666;">{{ talent.user.email }}</span>
+              </div>
+            </div>
+            <p style="font-size: 0.9rem; color: #333; margin: 0 0 15px 0;">{{ talent.bio | truncate(140, True, '...') }}</p>
+            <div style="margin-bottom: 15px;">
+              <span style="font-weight: bold; font-size: 0.8rem; display: block; margin-bottom: 5px;">Skills</span>
+              <div>
+                {% if talent.skills %}
+                  {% for skill in talent.skills.split(',')[:4] %}
+                    {% if skill.strip() %}
+                      <span style="background-color: #f2f2f2; border: 1px solid #ccc; padding: 2px 5px; font-size: 0.75rem; margin-right: 3px; display: inline-block; margin-bottom: 3px;">{{ skill.strip() }}</span>
+                    {% endif %}
+                  {% endfor %}
+                  {% if talent.skills.split(',')|length > 4 %}
+                    <span style="font-size: 0.75rem; color: #666;">+{{ talent.skills.split(',')|length - 4 }} more</span>
+                  {% endif %}
+                {% else %}
+                  <span style="font-size: 0.8rem; color: #666;">No skills specified.</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div style="border-top: 1px solid #eee; padding-top: 10px; margin-top: auto;">
+            <a href="{{ url_for('profile.view_profile', user_id=talent.user.id) }}" class="btn" style="width: 100%; text-align: center; box-sizing: border-box;">View Full Profile</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+      <div style="text-align: center; margin-top: 30px;">
+        {% if pagination.has_prev %}
+          <a href="{{ url_for('main.browse', page=pagination.prev_num, q=q) }}" class="btn">Previous</a>
+        {% endif %}
+        {% for page_num in pagination.iter_pages() %}
+          {% if page_num %}
+            {% if page_num == pagination.page %}
+              <strong style="padding: 6px 12px; border: 1px solid #333; background: #333; color: #fff;">{{ page_num }}</strong>
+            {% else %}
+              <a href="{{ url_for('main.browse', page=page_num, q=q) }}" class="btn">{{ page_num }}</a>
+            {% endif %}
+          {% else %}
+            <span style="padding: 6px 12px;">...</span>
+          {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+          <a href="{{ url_for('main.browse', page=pagination.next_num, q=q) }}" class="btn">Next</a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  {% else %}
+    <div style="text-align: center; margin-top: 40px; padding: 40px;" class="card">
+      <h4>No Talents Found</h4>
+      <p style="font-size: 0.9rem; color: #666; margin-bottom: 20px;">We couldn't find any profile matching "{{ q }}". Try searching for different names or skills.</p>
+      <a href="{{ url_for('main.browse') }}" class="btn">Clear Search</a>
+    </div>
+  {% endif %}
+</div>
+=======
+{% block title %}Browse Talents{% endblock %}
+{% block content %}
+<h4 class="fw-semibold mb-3">Browse Talents</h4>
+<p class="text-muted">Profiles will appear here on Day 2.</p>
+>>>>>>> ac1cc803711524f5e23023c04f966b9e0692bb22
+{% endblock %}

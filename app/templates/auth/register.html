@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+<<<<<<< HEAD
+{% block content %}
+<div class="card" style="max-width: 450px; margin: 0 auto;">
+  <h4>Create your account</h4>
+  <p style="font-size: 0.9rem; color: #666;">Join TalentHub and showcase your skills.</p>
+  <form method="POST" class="needs-validation" novalidate>
+    <div>
+      <label>Username</label>
+      <input type="text" name="username"
+        class="{% if errors.username %}is-invalid{% endif %}"
+        value="{{ form_data.get('username', '') }}"
+        required pattern="^[a-zA-Z0-9_]{3,20}$">
+      <div class="invalid-feedback">
+        {% if errors.username %}{{ errors.username }}{% else %}Username must be 3–20 characters: letters, numbers, underscores only.{% endif %}
+      </div>
+      <div style="font-size: 0.8rem; color: #666; margin-top: 3px;">3–20 characters, letters/numbers/underscores.</div>
+    </div>
+    <div>
+      <label>Email</label>
+      <input type="email" name="email"
+        class="{% if errors.email %}is-invalid{% endif %}"
+        value="{{ form_data.get('email', '') }}"
+        required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$">
+      <div class="invalid-feedback">
+        {% if errors.email %}{{ errors.email }}{% else %}Enter a valid email address.{% endif %}
+      </div>
+    </div>
+    <div>
+      <label>Password</label>
+      <input type="password" name="password" id="password"
+        class="{% if errors.password %}is-invalid{% endif %}"
+        required pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,32}$"
+        oninput="updateStrength(this.value); checkMatch();">
+      <div class="invalid-feedback">
+        {% if errors.password %}{{ errors.password }}{% else %}Password must be 8–32 chars and include at least one uppercase letter, one number, and one special character.{% endif %}
+      </div>
+      <div style="background:#e9ecef; height:4px; margin-top: 8px;">
+        <div id="strength-bar" class="password-strength" style="width:0%; background:#dc3545;"></div>
+      </div>
+      <div id="strength-label" style="font-size: 0.8rem; margin-top: 3px;"></div>
+    </div>
+    <div>
+      <label>Confirm Password</label>
+      <input type="password" name="confirm_password" id="confirm_password"
+        class="{% if errors.confirm_password %}is-invalid{% endif %}"
+        required oninput="checkMatch()">
+      <div class="invalid-feedback">
+        {% if errors.confirm_password %}{{ errors.confirm_password }}{% else %}Passwords do not match.{% endif %}
+      </div>
+    </div>
+    {% if errors.general %}
+      <div class="error-text" style="color: #dc3545; font-size: 0.9rem; margin-bottom: 15px;">{{ errors.general }}</div>
+    {% endif %}
+    <button type="submit" style="width: 100%;">Create Account</button>
+  </form>
+  <p style="font-size: 0.9rem; margin-top: 15px; text-align: center;">
+    Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+  </p>
+</div>
+{% endblock %}
+=======
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4">
+        <h4 class="mb-1 fw-semibold">Create your account</h4>
+        <p class="text-muted small mb-4">Join TalentHub and showcase your skills.</p>
+
+        <form method="POST" class="needs-validation" novalidate>
+
+          <div class="mb-3">
+            <label class="form-label small fw-medium">Username</label>
+            <input type="text" name="username"
+              class="form-control {% if errors.username %}is-invalid{% endif %}"
+              value="{{ form_data.get('username', '') }}"
+              placeholder="e.g. john_doe" autocomplete="username"
+              required pattern="^[a-zA-Z0-9_]{3,20}$">
+            <div class="invalid-feedback">
+              {% if errors.username %}{{ errors.username }}{% else %}Username must be 3–20 characters: letters, numbers, underscores only.{% endif %}
+            </div>
+            <div class="form-text">3–20 characters, letters/numbers/underscores.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-medium">Email</label>
+            <input type="email" name="email"
+              class="form-control {% if errors.email %}is-invalid{% endif %}"
+              value="{{ form_data.get('email', '') }}"
+              placeholder="you@example.com" autocomplete="email"
+              required pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$">
+            <div class="invalid-feedback">
+              {% if errors.email %}{{ errors.email }}{% else %}Enter a valid email address.{% endif %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-medium">Password</label>
+            <input type="password" name="password" id="password"
+              class="form-control {% if errors.password %}is-invalid{% endif %}"
+              placeholder="Min 8 chars" autocomplete="new-password"
+              required pattern="^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,32}$"
+              oninput="updateStrength(this.value); checkMatch();">
+            <div class="invalid-feedback">
+              {% if errors.password %}{{ errors.password }}{% else %}Password must be 8–32 chars and include at least one uppercase letter, one number, and one special character.{% endif %}
+            </div>
+            <div class="mt-2" style="background:#e9ecef; border-radius:2px; height:4px;">
+              <div id="strength-bar" class="password-strength" style="width:0%; background:#dc3545;"></div>
+            </div>
+            <div id="strength-label" class="form-text mt-1"> </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label small fw-medium">Confirm Password</label>
+            <input type="password" name="confirm_password" id="confirm_password"
+              class="form-control {% if errors.confirm_password %}is-invalid{% endif %}"
+              placeholder="Repeat password" autocomplete="new-password"
+              required oninput="checkMatch()">
+            <div class="invalid-feedback">
+              {% if errors.confirm_password %}{{ errors.confirm_password }}{% else %}Passwords do not match.{% endif %}
+            </div>
+          </div>
+
+          {% if errors.general %}
+          <div class="alert alert-danger py-2 small">{{ errors.general }}</div>
+          {% endif %}
+
+          <button type="submit" class="btn btn-dark w-100">Create Account</button>
+        </form>
+
+        <p class="text-center small text-muted mt-3">
+          Already have an account? <a href="{{ url_for('auth.login') }}">Log in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+>>>>>>> ac1cc803711524f5e23023c04f966b9e0692bb22
+{% block scripts %}
+<script>
+  function updateStrength(val) {
+    let score = 0;
+    if (val.length >= 8) score++;
+    if (/[A-Z]/.test(val)) score++;
+    if (/\d/.test(val)) score++;
+    if (/[!@#$%^&*()_+\-=]/.test(val)) score++;
+<<<<<<< HEAD
+=======
+
+>>>>>>> ac1cc803711524f5e23023c04f966b9e0692bb22
+    const bar = document.getElementById('strength-bar');
+    const label = document.getElementById('strength-label');
+    const levels = [
+      { w: '15%', bg: '#dc3545', text: 'Too weak' },
+      { w: '35%', bg: '#fd7e14', text: 'Weak' },
+      { w: '60%', bg: '#ffc107', text: 'Fair' },
+      { w: '80%', bg: '#20c997', text: 'Good' },
+      { w: '100%', bg: '#198754', text: 'Strong ✓' },
+    ];
+    const lvl = levels[Math.min(score, 4)];
+    bar.style.width = val.length ? lvl.w : '0%';
+    bar.style.background = val.length ? lvl.bg : '';
+    label.textContent = val.length ? lvl.text : '';
+  }
+<<<<<<< HEAD
+=======
+
+>>>>>>> ac1cc803711524f5e23023c04f966b9e0692bb22
+  function checkMatch() {
+    const pwd = document.getElementById('password');
+    const confirm = document.getElementById('confirm_password');
+    if (confirm.value) {
+      if (pwd.value !== confirm.value) {
+        confirm.setCustomValidity("Passwords do not match.");
+      } else {
+        confirm.setCustomValidity("");
+      }
+    }
+  }
+</script>
+{% endblock %}
