@@ -3,13 +3,13 @@ from collections import defaultdict
 from time import time
 from typing import Optional
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from pydantic import ValidationError
 
 from app import db
 from app.models import User
-from app.schemas import RegisterSchema, LoginSchema, ChangePasswordSchema, format_pydantic_errors
+from app.schemas import RegisterSchema, LoginSchema, ChangePasswordSchema, ForgotPasswordSchema, ResetPasswordSchema, format_pydantic_errors
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
@@ -155,3 +155,65 @@ def change_password():
             errors = format_pydantic_errors(e)
 
     return render_template("auth/change_password.html", errors=errors)
+
+
+@auth_bp.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if current_user.is_authenticated:
+        return redirect(url_for("main.dashboard"))
+    errors = {}
+    if request.method == "POST":
+        form_data = {
+            "email": request.form.get("email", "").strip().lower()
+        }
+        try:
+            schema = ForgotPasswordSchema(**form_data)
+            user = User.query.filter_by(email=schema.email).first()
+            if user:
+                from itsdangerous import URLSafeTimedSerializer
+                s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+                token = s.dumps(user.email, salt="password-reset")
+                reset_url = url_for("auth.reset_password", token=token, _external=True)
+                print("\n" + "="*60)
+                print("MOCK EMAIL TO CONSOLE")
+                print(f"To: {user.email}")
+                print("Subject: Password Reset Request")
+                print(f"Reset Link: {reset_url}")
+                print("="*60 + "\n")
+            flash("If the email is registered, a password reset link has been printed to the console.", "info")
+            return redirect(url_for("auth.login"))
+        except ValidationError as e:
+            errors = format_pydantic_errors(e)
+    return render_template("auth/forgot_password.html", errors=errors)
+
+
+@auth_bp.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for("main.dashboard"))
+    from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+    s = URLSafeTimedSerializer(current_app.config["SECRET_KEY"])
+    try:
+        email = s.loads(token, salt="password-reset", max_age=3600)
+    except (SignatureExpired, BadSignature):
+        flash("The password reset link is invalid or has expired.", "danger")
+        return redirect(url_for("auth.forgot_password"))
+    errors = {}
+    if request.method == "POST":
+        form_data = {
+            "new_password": request.form.get("new_password", ""),
+            "confirm_password": request.form.get("confirm_password", "")
+        }
+        try:
+            schema = ResetPasswordSchema(**form_data)
+            user = User.query.filter_by(email=email).first()
+            if not user:
+                flash("User not found.", "danger")
+                return redirect(url_for("auth.forgot_password"))
+            user.password_hash = hash_password(schema.new_password)
+            db.session.commit()
+            flash("Your password has been reset. You can now log in.", "success")
+            return redirect(url_for("auth.login"))
+        except ValidationError as e:
+            errors = format_pydantic_errors(e)
+    return render_template("auth/reset_password.html", errors=errors, token=token)

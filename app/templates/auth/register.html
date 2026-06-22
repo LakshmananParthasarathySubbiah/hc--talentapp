@@ -63,23 +63,46 @@
 <script>
   function updateStrength(val) {
     let score = 0;
-    if (val.length >= 8) score++;
-    if (/[A-Z]/.test(val)) score++;
-    if (/\d/.test(val)) score++;
-    if (/[!@#$%^&*()_+\-=]/.test(val)) score++;
+    if (val) {
+      const caps = (val.match(/[A-Z]/g) || []).length;
+      const smalls = (val.match(/[a-z]/g) || []).length;
+      const numbers = (val.match(/\d/g) || []).length;
+      const specials = (val.match(/[\W_]/g) || []).length;
+
+      score += Math.min(caps, 2);
+      score += Math.min(smalls, 2);
+      score += Math.min(numbers, 2);
+      score += Math.min(specials, 2);
+    }
     const bar = document.getElementById('strength-bar');
     const label = document.getElementById('strength-label');
-    const levels = [
-      { w: '15%', bg: '#dc3545', text: 'Too weak' },
-      { w: '35%', bg: '#fd7e14', text: 'Weak' },
-      { w: '60%', bg: '#ffc107', text: 'Fair' },
-      { w: '80%', bg: '#20c997', text: 'Good' },
-      { w: '100%', bg: '#198754', text: 'Strong ✓' },
-    ];
-    const lvl = levels[Math.min(score, 4)];
-    bar.style.width = val.length ? lvl.w : '0%';
-    bar.style.background = val.length ? lvl.bg : '';
-    label.textContent = val.length ? lvl.text : '';
+    const percentage = (score / 8) * 100;
+    
+    let bg = '#dc3545';
+    let text = 'Too weak';
+    
+    if (score === 0) {
+      bg = '#dc3545';
+      text = '';
+    } else if (score <= 2) {
+      bg = '#dc3545';
+      text = 'Weak';
+    } else if (score <= 4) {
+      bg = '#fd7e14';
+      text = 'Fair';
+    } else if (score <= 6) {
+      bg = '#20c997';
+      text = 'Good';
+    } else {
+      bg = '#198754';
+      text = 'Strong ✓';
+    }
+    
+    bar.style.width = val.length ? percentage + '%' : '0%';
+    bar.style.background = val.length ? bg : '';
+    if (label) {
+      label.textContent = val.length ? text : '';
+    }
   }
   function checkMatch() {
     const pwd = document.getElementById('password');

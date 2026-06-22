@@ -124,6 +124,34 @@ class ProfileSchema(BaseModel):
             raise ValueError("Enter a valid URL.")
         return v
 
+class ForgotPasswordSchema(BaseModel):
+    email: str
+
+    @field_validator("email")
+    @classmethod
+    def validate_email_field(cls, v: str) -> str:
+        v = v.strip().lower()
+        if not EMAIL_RE.match(v):
+            raise ValueError("Enter a valid email address.")
+        return v
+
+class ResetPasswordSchema(BaseModel):
+    new_password: str
+    confirm_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password(cls, v: str) -> str:
+        if not PASSWORD_RE.match(v):
+            raise ValueError("Password must be 8–32 chars and include at least one uppercase letter, one number, and one special character.")
+        return v
+
+    @model_validator(mode="after")
+    def validate_passwords_match(self) -> 'ResetPasswordSchema':
+        if self.new_password != self.confirm_password:
+            raise ValueError("Passwords do not match.")
+        return self
+
 def format_pydantic_errors(e: ValidationError) -> dict:
     errors = {}
     for err in e.errors():

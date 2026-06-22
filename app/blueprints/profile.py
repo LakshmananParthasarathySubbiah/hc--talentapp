@@ -163,7 +163,7 @@ def export_pdf(user_id):
     import io
     from flask import send_file
     from reportlab.lib.pagesizes import letter
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=letter, rightMargin=72, leftMargin=72, topMargin=72, bottomMargin=72)
@@ -201,6 +201,16 @@ def export_pdf(user_id):
     )
     story.append(Paragraph(f"Talent Profile: {user.username}", title_style))
     story.append(Paragraph(f"Email: {user.email}", email_style))
+    import os
+    from flask import current_app
+    if profile.photo_filename:
+        photo_path = os.path.join(current_app.config["UPLOAD_FOLDER"], profile.photo_filename)
+        if os.path.exists(photo_path):
+            try:
+                story.append(Image(photo_path, width=100, height=100))
+                story.append(Spacer(1, 12))
+            except Exception:
+                pass
     story.append(Paragraph("Biography", h2_style))
     bio_text = profile.bio or "No biography provided."
     story.append(Paragraph(bio_text.replace('\n', '<br/>'), body_style))

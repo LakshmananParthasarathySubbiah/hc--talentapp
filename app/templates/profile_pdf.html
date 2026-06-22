@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Talent Profile - {{ profile_user.username }}</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 1.5cm;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #333333;
+      line-height: 1.5;
+      font-size: 11pt;
+    }
+    .header {
+      border-bottom: 2px solid #333333;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-details {
+      flex: 1;
+    }
+    .header-details h1 {
+      margin: 0 0 5px 0;
+      font-size: 24pt;
+      font-weight: bold;
+    }
+    .header-details p {
+      margin: 0;
+      color: #666666;
+      font-size: 11pt;
+    }
+    .photo-container {
+      margin-left: 20px;
+    }
+    .photo {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid #cccccc;
+    }
+    .initials-avatar {
+      width: 100px;
+      height: 100px;
+      background-color: #333333;
+      color: #ffffff;
+      font-size: 28pt;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .section {
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+    .section-title {
+      font-size: 14pt;
+      font-weight: bold;
+      margin: 0 0 8px 0;
+      border-bottom: 1px solid #cccccc;
+      padding-bottom: 3px;
+    }
+    .bio-text {
+      white-space: pre-wrap;
+    }
+    .skills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .skill-tag {
+      background-color: #f2f2f2;
+      border: 1px solid #cccccc;
+      padding: 3px 8px;
+      font-size: 9.5pt;
+      display: inline-block;
+      margin-right: 5px;
+      margin-bottom: 5px;
+    }
+    .links-list {
+      margin: 0;
+      padding: 0;
+      list-style-type: none;
+    }
+    .links-list li {
+      margin-bottom: 5px;
+    }
+    .links-list a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-details">
+      <h1>{{ profile_user.username }}</h1>
+      <p>Email: {{ profile_user.email }}</p>
+    </div>
+    <div class="photo-container">
+      {% if photo_url %}
+        <img class="photo" src="{{ photo_url }}" alt="Profile Photo">
+      {% else %}
+        <div class="initials-avatar">
+          {{ profile_user.username[0] | upper }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Biography</div>
+    <div class="bio-text">{{ profile.bio }}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Skills</div>
+    <div class="skills-container">
+      {% if profile.skills %}
+        {% for skill in profile.skills.split(',') %}
+          {% if skill.strip() %}
+            <span class="skill-tag">{{ skill.strip() }}</span>
+          {% endif %}
+        {% endfor %}
+      {% else %}
+        <span>No skills specified.</span>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if profile.links and (profile.links.get('github') or profile.links.get('linkedin') or profile.links.get('website')) %}
+  <div class="section">
+    <div class="section-title">Links</div>
+    <ul class="links-list">
+      {% if profile.links.get('github') %}
+        <li><b>GitHub:</b> <a href="{{ profile.links.get('github') }}">{{ profile.links.get('github') }}</a></li>
+      {% endif %}
+      {% if profile.links.get('linkedin') %}
+        <li><b>LinkedIn:</b> <a href="{{ profile.links.get('linkedin') }}">{{ profile.links.get('linkedin') }}</a></li>
+      {% endif %}
+      {% if profile.links.get('website') %}
+        <li><b>Website:</b> <a href="{{ profile.links.get('website') }}">{{ profile.links.get('website') }}</a></li>
+      {% endif %}
+    </ul>
+  </div>
+  {% endif %}
+</body>
+</html>
